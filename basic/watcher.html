@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <input v-model="userInput">
+    <p>You input {{ userInputCharCount }} characters.</p>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        userInput: '',
+        userInputCharCount: 0,
+      },
+      watch: {
+        userInput: function() {
+          this.userInputCharCount = this.userInput.length
+        }
+      }
+    })
+  </script>
+</body>
+</html>
