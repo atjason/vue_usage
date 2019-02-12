@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .basic {
+      font-size: 1.2rem;
+    }
+
+    .active {
+      font-weight: bold;
+    }
+
+    .danger-text {
+      color: red;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <p class="basic" :class="classObject">This is the text.</p>
+    <p class="basic" :class="[{active: active, 'danger-text': danger}]">This is the text.</p>
+
+    <button @click="toggleActive">Toggle Active</button>
+    <button @click="toggleDanger">Toggle Danger</button>
+    <br><br>
+    
+    <p :style="styleObject">This is the text.</p>
+    <p :style="[activeStyle, dangerStyle]">This is the text.</p>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        active: true,
+        danger: false,
+      },
+      computed: {
+        classObject: function() {
+          return {
+            active: this.active,
+            'danger-text': this.danger,
+          }
+        },
+        styleObject: function() {
+          return {
+            'font-weight': this.active ? 'bold' : 'inherit',
+            color: this.danger ? 'red' : 'inherit',
+          }
+        },
+        activeStyle: function() {
+          return {
+            'font-weight': this.active ? 'bold' : 'inherit',
+          }
+        },
+        dangerStyle: function() {
+          return {
+            color: this.danger ? 'red' : 'inherit',
+          }
+        }
+      },
+      methods: {
+        toggleActive: function() {
+          this.active = !this.active
+        },
+        toggleDanger: function() {
+          this.danger = !this.danger
+        }
+      }
+    })
+  </script>
+</body>
+</html>
