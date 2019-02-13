@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <ul>
+      <li v-for="(todo, index) of todoList" :key="todo.id">
+        {{ index }}. {{ todo.id }}: {{ todo.title }}
+      </li>
+    </ul>
+
+    <ul>
+      <li v-for="(value, key, index) of object" :key="key">
+        {{ index }}. {{ key }}: {{ value }}
+      </li>
+    </ul>
+
+    <h2>Manually edit array item by index</h2>
+    <p>Usage: Vue.set(ARRAY, INDEX, NEW_VALUE)</p>
+    <p><i>e.g., Vue.set(app.todoList, 0, { id: 'a', title: 'Buy 2 books' })</i></p>
+    <p>Usage: Vue.set(OBJECT, KEY, VALUE)</p>
+    <p><i>e.g., Vue.set(app.object, 'gender', 'man')</i></p>
+
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        todoList: [
+          { id: 'a', title: 'Buy a book'},
+          { id: 'b', title: 'Buy a cup'}
+        ],
+        object: {
+          firstName: 'Tom',
+          lastName: 'Smith',
+          age: 30,
+        }
+      },
+    })
+  </script>
+</body>
+</html>
