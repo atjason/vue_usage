@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <a href="https://vuejs.org/v2/guide/forms.html">Form Input Binding</a>
+  <br><br>
+
+  <div id="app">
+    <h2>Text</h2>
+    <input v-model="message" placeholder="edit me">
+    <br><p>lazy: </span><input v-model.lazy="message" placeholder="edit me">
+    <p>What you input is: {{ message }}</p>
+
+    <p>Number: </p>
+    <input v-model.number="number">
+    <span>Number: {{ number }}</span>
+
+    <h2>Multiline Text</h2>
+    <p>Multiline message is:</p>
+    <p style="white-space: pre-line;">{{ multilineMessage }}</p>
+    <textarea v-model="multilineMessage" placeholder="edit me"></textarea>
+
+    <h2>Checkbox</h2>
+    <input type="checkbox" id="checkbox" v-model="checked">
+    <label for="checkbox">{{ checked }}</label>
+
+    <hr>
+
+    <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+    <label for="jack">Jack</label>
+    <input type="checkbox" id="tom" value="Tom" v-model="checkedNames">
+    <label for="tom">Tom</label>
+    <input type="checkbox" id="jim" value="Jim" v-model="checkedNames">
+    <label for="jim">Jim</label>
+    <p>Checked names: {{ checkedNames }}</p>
+
+    <h2>Radio</h2>
+    <input type="radio" id="one" value="Option One" v-model="picked">
+    <label for="one">One</label>
+    <br>
+    <input type="radio" id=two" value="Option Two" v-model="picked">
+    <label for="two">Two</label>
+    <p>Picked: {{ picked }}</p>
+
+    <h2>Select</h2>
+    <select v-model="selected">
+      <option disabled value=''>Please select one</option>
+      <option value="Option A">A</option>
+      <option value="Option B">B</option>
+      <option value="Option C">C</option>
+    </select>
+    <p>Selected: {{ selected }}</p>
+
+    <select v-model="multiSelected" multiple>
+      <option v-for="option in options" :value="option.value">
+        {{ option.title }}
+      </option>
+    </select>
+    <p>Multi-Selected: {{ multiSelected }}</p>
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        message: '',
+        multilineMessage: '',
+        number: 0,
+        checked: false,
+        checkedNames: ["Jack"],
+        picked: 'One',
+        selected: '',
+        multiSelected: [],
+        options: [
+          { title: 'A', value: 'Option A'},
+          { title: 'B', value: 'Option B'},
+          { title: 'C', value: 'Option C'},
+        ]
+      },
+    })
+  </script>
+</body>
+</html>
