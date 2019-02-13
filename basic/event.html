@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <a href="https://vuejs.org/v2/guide/events.html">Event Usage</a>
+  <br><br>
+
+  <div id="app">
+    <button @click="count">Count</button>
+    <p>You clicks the button above {{counter}} times.</p>
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        counter: 0,
+      },
+      methods: {
+        count: function() {
+          this.counter += 1
+        }
+      }
+    })
+  </script>
+</body>
+</html>
