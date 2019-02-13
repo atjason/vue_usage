@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h1>v-if / v-else-if / v-else</h1>
+    <h2 v-if="ok">Yes</h2>
+    <h2 v-else>No</h2>
+
+    <h2>template</template></h2>
+    <template v-if="ok">
+      <h2>Title</h2>
+      <p>Paragraph 1</p>
+      <p>Paragraph 2</p>
+    </template>
+
+    <button @click="toggleOK">Toggle Show</button>
+
+    <br><br>
+    <div v-if="type === 'A'">A</div>
+    <div v-else-if="type === 'B'">B</div>
+    <div v-else-if="type === 'C'">C</div>
+    <div v-else>Not A/B/C</div>
+
+    <button @click="toggleType">Toggle Type</button>
+
+    <h1>key</h1>
+
+    <template v-if="loginType === 'username'">
+        <label>Username:</label>
+        <input placeholder="Enter your username" key="username-input" v-model="usernameInput">
+    </template>
+    <template v-else>
+      <label>Email:</label>
+      <input placeholder="Enter your email" key="email-input" v-model="emailInput">
+    </template>
+
+    <br>
+    <button @click="toggleLoginType">Toggle Login Type</button>
+
+    <br>
+    <h2 v-show="show">v-show</h2>
+    <button @click="toggleShow">Toggle Show</button>
+
+    <p>v-if: really render and destroy when switch state. Used when rarely switch state.</p>
+    <p>v-show: always render and only change display attribute when switch. Used when frequently switch state.</p>
+  </div>
+  <script>
+
+    new Vue({
+      el: '#app',
+      data: {
+        ok: false,
+        type: 'A',
+        loginType: 'username',
+        usernameInput: '',
+        emailInput: '',
+        show: true,
+      },
+      methods: {
+        toggleOK: function() {
+          this.ok = !this.ok
+        },
+
+        toggleType: function() {
+          const typeList = ['A', 'B', 'C', 'D']
+          const index = Math.floor(typeList.length * Math.random())
+          this.type = typeList[index]
+        },
+
+        toggleLoginType: function() {
+          this.loginType = (this.loginType === 'username') ? 'email' : 'username'
+        },
+
+        toggleShow: function() {
+          this.show = !this.show
+        }
+      }
+    })
+  </script>
+</body>
+</html>
