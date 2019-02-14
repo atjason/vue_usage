@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Component without props</h2>
+    <p>Note: `data` in component muse be method.</p>
+    <button-counter></button-counter>
+
+    <h2>Component with props</h2>
+    <blog-post 
+      v-for="post in postList" 
+      :key="post.id"
+      :post="post"
+      @enlarge-text="enlargeText"
+      :style="{'font-size': postFontSize + 'rem'}">
+    </blog-post>
+
+    <h2>Component with v-model</h2>
+    <custom-input v-model='input'></custom-input>
+    <p>What you input is: {{ input }}</p>
+
+    <h2>Component with slot</h2>
+    <custom-alert><i>Divide by 0.</i></custom-alert>
+  </div>
+
+  <script>
+    Vue.component('button-counter', {
+      data: function() {
+        return {
+          counter: 0,
+        }
+      },
+      methods: {
+        count: function() {
+          this.counter += 1
+        }
+      },
+      template: "<button @click='count'>You clicked me {{ counter }} times.</button>",
+    })
+
+    Vue.component('blog-post', {
+      props: ['post'],
+      template: `
+        <div>
+          <h2>{{ post.title }}</h2>
+          <p>{{ post.content }}</p>
+          <button @click="$emit('enlarge-text', 0.1)">
+            Enlarge Text
+          </button>
+        </div>
+      `,
+    })
+
+    Vue.component('custom-input', {
+      props: ['value'],
+      template: `
+        <input
+          :value="value"
+          @input="$emit('input', $event.target.value)"
+        >
+      `,
+    })
+
+    Vue.component('custom-alert', {
+      template: `
+        <div>
+          <strong>Error: </strong>
+          <slot></slot>
+        </div>
+      `,
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        postList: [
+          { id: 1, title: 'Post 1', content: 'Content of post 1.'},
+          { id: 2, title: 'Post 2', content: 'Content of post 2.'},
+        ],
+        postFontSize: 1,
+        input: '',
+      },
+      methods: {
+        enlargeText: function(number) {
+          this.postFontSize += number
+        }
+      }
+    })
+  </script>
+</body>
+</html>

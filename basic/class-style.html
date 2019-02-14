@@ -28,6 +28,7 @@
     
     <p :style="styleObject">This is the text.</p>
     <p :style="[activeStyle, dangerStyle]">This is the text.</p>
+    <p :style="{'font-weight': active ? 'bold' : 'inherit', color: this.danger ? 'red' : 'inherit'}">This is the text.</p>
   </div>
 
   <script>
