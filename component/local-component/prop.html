@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Prop Validation</h2>
+    <p>Check code for different usage.</p>
+    <p>Check console warning.</p>
+    <my-component :prop-d="'I am a String, not a Number.'"></my-component>
+
+    <h2>Attribute Inheritance</h2>
+    <base-input
+      v-model="username"
+      label="Input your name:"
+      required
+      placeholder="Enter your username"
+      style="color: blue"
+    ></base-input>
+    <p>Your name: {{ username }}</p>
+  </div>
+
+  <script>
+    Vue.component('my-component', {
+      props: {
+        // Basic type check (`null` matches any type)
+        propA: Number,
+        // Multiple possible types
+        propB: [String, Number],
+        // Required string
+        propC: {
+          type: String,
+          required: true
+        },
+        // Number with a default value
+        propD: {
+          type: Number,
+          default: 100
+        },
+        // Object with a default value
+        propE: {
+          type: Object,
+          // Object or array defaults must be returned from
+          // a factory function
+          default: function () {
+            return { message: 'hello' }
+          }
+        },
+        // Custom validator function
+        propF: {
+          validator: function (value) {
+            // The value must match one of these strings
+            return ['success', 'warning', 'danger'].indexOf(value) !== -1
+          }
+        }
+      },
+      template: `
+        <p>{{ propD }}</p>
+      `,
+    })
+
+    Vue.component('base-input', {
+      // Don't inherit parent non-prop attributes to root element in component.
+      // e.g., placeholder, required, etc.
+      // NOTE: class, style will still be inherited.
+      inheritAttrs: false,
+      props: ['label', 'value'],
+
+      // Manually inherit parent non-prop attributes to special sub-element in component.
+      // e.g., placeholder, required, etc.
+      // v-bind="$attrs"
+      template: `
+        <label>
+          {{ label }}
+          <input
+            v-bind="$attrs"
+            v-bind:value="value"
+            v-on:input="$emit('input', $event.target.value)"
+          >
+        </label>
+      `
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        title: 'b',
+        post: {
+          title: 'the post'
+        },
+        username: '',
+      },
+    })
+  </script>
+</body>
+</html>
