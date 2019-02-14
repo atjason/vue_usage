@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Custom Component v-model</h2>
+    <p>Do you love Vue?</p>
+    <base-checkbox v-model="loveVue"></base-checkbox>
+    <span><strong>{{ loveVue ? 'Yes' : 'No' }}</strong></span>
+
+    <h2>Bind Native Events to Component</h2>
+    <base-input v-model='username' label='Username: '></base-input>
+    <p>What you input is: {{ username }}</p>
+
+    <h2>.sync Modifier</h2>
+    <text-document v-bind:title.sync='email'></text-document>
+    <p>What you input is: {{ email }}</p>
+  </div>
+
+  <script>
+    Vue.component('base-checkbox', {
+      model: {
+        prop: 'checked',
+        event: 'change',
+      },
+      props: {
+        checked: Boolean,
+      },
+      template: `
+        <input
+          type="checkbox"
+          :checked="checked"
+          @change="$emit('change', $event.target.checked)"
+        >
+      `,
+    })
+    
+    Vue.component('base-input', {
+      inheritAttrs: false,
+      props: ['label', 'value'],
+      computed: {
+        inputListeners: function() {
+          return Object.assign({},
+            this.listeners,
+            {
+              // NOTE: Should use arrow function to lock this object here.
+              input: event => {
+                this.$emit('input', event.target.value)
+              }
+            }
+          )
+        }
+      },
+      template: `
+        <label>
+          {{ label }}
+          <input
+            v-bind='$attrs'
+            v-on='inputListeners'
+            :value='value'
+          >
+        </label>
+      `,
+    })
+
+    Vue.component('text-document', {
+      props: ['title'],
+      template: `
+        <label>
+          Email:
+          <input
+            :value='title'
+            @change="$emit('update:title', $event.target.value)"
+          >
+        </label>
+      `,
+    })
+
+    new Vue({
+      el: '#app',
+      data: {
+        loveVue: true,
+        username: '',
+        email: '',
+      },
+    })
+  </script>
+</body>
+</html>
