@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Local Component</h2>
+    <component-a></component-a>
+    <component-b></component-b>
+  </div>
+
+  <script src="./component-b.js"></script>
+
+  <script>
+    const ComponentA = {
+      template: `
+        <p>I'm component A.</p>
+      `,
+    }
+
+    const app = new Vue({
+      el: '#app',
+      components: {
+        ComponentA,
+        ComponentB,
+      },
+      data: {
+        
+      },
+    })
+  </script>
+</body>
+</html>
