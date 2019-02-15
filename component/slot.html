@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Slots with Default Content</h2>
+    <submit-button></submit-button>
+    <submit-button>
+      <span style='color: green;'><i>Add</i></span>
+    </submit-button>
+
+    <h2>Named Slots</h2>
+    <page-layout>
+      <template v-slot:header>
+        <h3>I'm the title</h3>
+      </template>
+
+      <!-- <template v-slot:default> -->
+      <template>
+        <p>I'm the main content.</p>
+      </template>
+
+      <template v-slot:footer>
+        <p><i>I'm the foot.</i></p>
+      </template>
+    </page-layout>
+
+    <h2>Scoped Slots</h2>
+    <person-info :person="user">
+      <template v-slot:default="slotProps">
+        {{ slotProps.person.firstName }}
+      </template>
+    </person-info>
+
+    <person-info :person="user" v-slot:default="slotProps">
+      {{ slotProps.person.firstName }}
+    </person-info>
+
+    <person-info :person="user" v-slot="slotProps">
+      {{ slotProps.person.firstName }}
+    </person-info>
+
+    <person-info :person="user" v-slot="{ person }">
+      {{ person.firstName }}
+    </person-info>
+
+    <person-info :person="user" v-slot="{ person: user }">
+      {{ user.firstName }}
+    </person-info>
+  </div>
+
+  <script>
+    Vue.component('submit-button', {
+      template: `
+        <button>
+          <slot>Submit</slot>
+        </button>
+      `,
+    })
+
+    Vue.component('page-layout', {
+      template: `
+        <div>
+          <header>
+            <slot name="header"></slot>
+          </header>
+
+          <main>
+            <slot></slot>
+          </main>
+
+          <footer>
+            <slot name="footer"></slot>
+          </footer>
+        </div>
+      `,
+    })
+
+    Vue.component('person-info', {
+      props: ['person'],
+      template: `
+        <div>
+          <slot v-bind:person='person'>
+            {{ person.lastName }}
+          </slot>
+        </div>
+      `,
+    })
+
+    new Vue({
+      el: '#app',
+      data: {
+        user: {
+          firstName: 'Tom',
+          lastName: 'Smith',
+        }
+      },
+    })
+  </script>
+</body>
+</html>
