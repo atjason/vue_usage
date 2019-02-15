@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Aysnc Component</h2>
+    <p>The async component will appear 1s later.</p>
+    <async-component></async-component>
+
+    <h2>Work with WebPack</h2>
+    <p><i>TODO</i></p>
+    <a href='https://vuejs.org/v2/guide/components-dynamic-async.html'>Tutorial</a>
+  </div>
+
+  <script>
+    Vue.component('async-component', function(resolve, reject) {
+      setTimeout(() => {
+        resolve({
+          template: `
+            <p>I'm async component.</p>
+          `,
+        })
+      }, 1000)
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        
+      },
+    })
+  </script>
+</body>
+</html>
