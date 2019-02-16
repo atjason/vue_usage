@@ -25,13 +25,19 @@
     }
 
     .list-item {
+      transition: all 1s;
       display: inline-block;
       margin-right: 10px;
     }
 
-    .group-slide-enter-active,
-    .group-slide-leave-active {
+    .group-slide-enter-active {
       transition: all 1s;
+    }
+    .group-slide-leave-active {
+      position: absolute;
+    }    
+    .group-slide-move {
+      transition: transform 1s;
     }
 
     .group-slide-enter,
@@ -39,12 +45,9 @@
       opacity: 0;
       transform: translateY(30px);
     }
-    
-    .group-slide-move {
-      transition: transform 1s;
-    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 </head>
 
 <body>
@@ -91,14 +94,16 @@
     <h2>List Entering/Leaving Transitions</h2>
     <button @click="add">Add</button>
     <button @click="remove">Remove</button>
-    <br><br>
     <transition-group name="group-slide" tag='p'>
       <span v-for="item in list" :key="item" class="list-item">
         {{ item }}
       </span>
     </transition-group>
+    <p>Usage: when use `-move` for `transition-group`, the `-active` usage is different. Check code for detail.</p>
   </div>
-  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
+
   <script>
   
     var app = new Vue({
