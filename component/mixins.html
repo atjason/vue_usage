@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Mixins</h2>
+    <p>The key for mixins are the logic to deal with conflict.</p>
+    <p>Mixin hooks (e.g., `created`) will be called before the component’s own hooks.</p>
+  </div>
+  
+  <script>  
+    var mixin = {
+      data: function() {
+        return {
+          message: 'hello',
+          foo: 'foo',
+          person: {
+            name: 'Tom',
+            age: 3,
+          }
+        }
+      },
+      created: function() {
+        this.sayHello()
+      },
+      methods: {
+        sayHello: function() {
+          console.log('Hello World.')
+        }
+      }
+    }
+
+    var Component = Vue.extend({
+      mixins: [mixin],
+      data: function() {
+        return {
+          message: 'goodbye',
+          bar: 'bar',
+          person: {
+            name: 'Jim',
+          }
+        }
+      },
+      created: function() {
+        console.log(JSON.stringify(this.$data))
+      },
+      methods: {
+        sayHello: function() {
+          console.log('Hello Vue.js.')
+        }
+      }
+    })
+
+    var component = new Component()
+
+    // console output:
+    // Hello World.
+    // {"message":"goodbye","bar":"bar","person":{"name":"Jim","age":3},"foo":"foo"}
+  </script>
+</body>
+</html>
