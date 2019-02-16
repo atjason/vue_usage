@@ -7,8 +7,22 @@
 <body>
   <div id="app">
     <h2>Mixins</h2>
-    <p>The key for mixins are the logic to deal with conflict.</p>
-    <p>Mixin hooks (e.g., `created`) will be called before the component’s own hooks.</p>
+    <p>The key for mixins are the logic to deal with merge/conflict.</p>
+    <ul>
+      <li>
+        `data` will be merged using deep copy.
+      </li>
+      <li>
+        hooks (e.g., `created`) will NOT be merged or replaced, but keep in same time.
+      </li>
+      <li>
+        mixin hooks will be called before the component’s own hooks.
+      </li>
+      <li>
+        Options that expect object values, for example `methods`, `components` and `directives`, will be merged into the same object.
+      </li>
+    </ul>
+    <p></p>
   </div>
   
   <script>  
