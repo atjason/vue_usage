@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .preview-color {
+      width: 50px;
+      height: 50px;
+      display: inline-block;
+      background-color: lightgreen;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  
+</head>
+
+<body>
+  <div id="app">
+    <h2>Animate Number</h2>
+    <input v-model.number='number' type='number' step=20>
+    <p>{{ animatedNumber }}</p>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
+  <script>  
+    var app = new Vue({
+      el: "#app",
+      data: {
+        number: 20,
+        tweenedNumber: 20,
+      },
+      computed: {
+        animatedNumber: function() {
+          return this.tweenedNumber.toFixed(0)
+        }
+      },
+      watch: {
+        number: function(newValue) {
+          TweenLite.to(this.$data, 0.5, { tweenedNumber: newValue })
+        }
+      }
+    })
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/tween.js@16.3.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/color-js@1.0.3"></script>
+
+  <div id='app2'>
+    <h2>Animate Color</h2>
+    <input v-model='colorQuery' @keyup.enter='updateColor' placeholder="Enter a color">
+    <button @click='updateColor'>Update</button>
+    <p>Preview:</p>
+    <span class='preview-color' :style="{ 'background-color': tweenedCSSColor }"></span>
+    <p>{{ tweenedCSSColor }}</p>
+  </div>
+
+  <script>
+    var Color = net.brehaut.Color
+
+    new Vue({
+      el: '#app2',
+      data: {
+        colorQuery: '',
+        color: {
+          red: 0,
+          green: 255,
+          blue: 0,
+          alpha: 0.9,
+        },
+        tweenedColor: {}
+      },
+      created: function() {
+        this.tweenedColor = Object.assign({}, this.color)
+      },
+      watch: {
+        color: function() {
+          function animate() {
+            if (TWEEN.update()) {
+              requestAnimationFrame(animate)
+            }
+          }
+          
+          new TWEEN.Tween(this.tweenedColor).to(this.color, 750).start()
+          animate()
+        }
+      },
+      computed: {
+        tweenedCSSColor: function() {
+          return new Color(this.tweenedColor).toCSS()
+        }
+      },
+      methods: {
+        updateColor: function() {
+          this.color = new Color(this.colorQuery).toRGB()
+          this.colorQuery = ''
+        }
+      }
+    })
+  </script>
+
+  <div id="app3">
+    <h2>Organizing Transitions into Components</h2>
+
+    <input v-model.number="firstNumber" type="number" step="20"> +
+    <input v-model.number="secondNumber" type="number" step="20"> =
+    {{ result }}
+    <p>
+      <animated-integer v-bind:value="firstNumber"></animated-integer> +
+      <animated-integer v-bind:value="secondNumber"></animated-integer> =
+      <animated-integer v-bind:value="result"></animated-integer>
+    </p>
+  </div>
+
+  <script>
+    Vue.component('animated-integer', {
+      template: '<span>{{ tweeningValue }}</span>',
+      props: {
+        value: {
+          type: Number,
+          required: true
+        }
+      },
+      data: function () {
+        return {
+          tweeningValue: 0
+        }
+      },
+      watch: {
+        value: function (newValue, oldValue) {
+          this.tween(oldValue, newValue)
+        }
+      },
+      mounted: function () {
+        this.tween(0, this.value)
+      },
+      methods: {
+        tween: function (startValue, endValue) {
+          var that = this
+          function animate () {
+            if (TWEEN.update()) {
+              requestAnimationFrame(animate)
+            }
+          }
+
+          new TWEEN.Tween({ tweeningValue: startValue })
+            .to({ tweeningValue: endValue }, 500)
+            .onUpdate(function () {
+              that.tweeningValue = this.tweeningValue.toFixed(0)
+            })
+            .start()
+
+          animate()
+        }
+      }
+    })
+
+    new Vue({
+      el: '#app3',
+      data: {
+        firstNumber: 20,
+        secondNumber: 40
+      },
+      computed: {
+        result: function () {
+          return this.firstNumber + this.secondNumber
+        }
+      },
+    })
+  </script>
+</body>
+</html>
