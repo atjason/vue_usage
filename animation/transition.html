@@ -94,6 +94,7 @@
     <h2>List Entering/Leaving Transitions</h2>
     <button @click="add">Add</button>
     <button @click="remove">Remove</button>
+    <button @click="shuffle">Shuffle</button>
     <transition-group name="group-slide" tag='p'>
       <span v-for="item in list" :key="item" class="list-item">
         {{ item }}
@@ -133,6 +134,16 @@
         },
         remove: function() {
           this.list.splice(this.randomIndex(), 1)
+        },
+        shuffle: function() {
+          let listCopy = [...this.list]
+          let newList = []
+          while(listCopy.length) {
+            const index = Math.floor(Math.random() * listCopy.length)
+            const item = listCopy.splice(index, 1)[0]
+            newList.push(item)
+          }
+          this.list = newList
         }
       }
     })
