@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .bounce-enter-active {
+      animation: bounce-in 0.5s;
+    }
+    .bounce-leave-active {
+      animation: bounce-in 0.5s reverse;
+    }
+
+    @keyframes bounce-in {
+      0%    { transform: scale(0); }
+      50%   { transform: scale(1.5); }
+      100%  { transform: scale(1); }
+    }
+
+    div.center {
+      text-align: center;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>CSS Animation</h2>
+    <button @click="show = !show">Toggle</button>
+    <transition name="bounce" appear>
+      <div class="center" v-show="show">
+        <p>Toggle to hide me.</p>
+      </div>  
+    </transition>
+    <p>user `appear` to run transition when appears.</p>
+  </div>
+  
+  <script>
+  
+    var app = new Vue({
+      el: "#app",
+      data: {
+        show: true,
+      },
+      methods: {
+      
+      }
+    })
+  </script>
+</body>
+</html>

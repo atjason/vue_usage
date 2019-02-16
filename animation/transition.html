@@ -23,13 +23,33 @@
       transform: translateX(10px);
       opacity: 0;
     }
+
+    .list-item {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .group-slide-enter-active,
+    .group-slide-leave-active {
+      transition: all 1s;
+    }
+
+    .group-slide-enter,
+    .group-slide-leave-to {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    
+    .group-slide-move {
+      transition: transform 1s;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 
 <body>
   <div id="app">
-    <h2>Show / Hide Single Element</h2>
+    <h2>Transition Single Element</h2>
     <button @click="show = !show">Toggle</button>
     <transition name="fade">
       <p v-show="show">Toggle to hide me.</p>
@@ -37,6 +57,46 @@
     <transition name="slide-fade">
       <p v-show="show">Toggle to slide hide me.</p>
     </transition>
+
+    <h2>Transition Between Elements</h2>
+    <p>Usage: use `key` to distinguish elements</p>
+    <button @click="isEditing = !isEditing">Toggle</button>
+    <br><br>
+    <transition>
+      <button v-if="isEditing" key='save'>Save</button>
+      <button v-else key='edit'>Edit</button>
+    </transition>
+    <transition>
+      <button v-bind:key='isEditing'>
+        {{ isEditing ? 'Save' : 'Edit'}}
+      </button>
+    </transition>
+
+    <h2>Transition Mode</h2>
+    <p>Usage: `in-out` & `out-in`</p>
+    <button @click="active = !active">Toggle</button>
+    <br><br>
+    <transition name="fade" mode="out-in">
+      <button v-bind:key='active'>
+        {{ active ? 'On' : 'Off'}}
+      </button>
+    </transition>
+
+    <h2>Transition Between Components</h2>
+    <button @click="view = (view === 'v-a') ? 'v-b' : 'v-a'">Toggle</button>
+    <transition name="fade" mode="out-in">
+      <component :is="view"></component>
+    </transition>
+
+    <h2>List Entering/Leaving Transitions</h2>
+    <button @click="add">Add</button>
+    <button @click="remove">Remove</button>
+    <br><br>
+    <transition-group name="group-slide" tag='p'>
+      <span v-for="item in list" :key="item" class="list-item">
+        {{ item }}
+      </span>
+    </transition-group>
   </div>
   
   <script>
@@ -45,9 +105,30 @@
       el: "#app",
       data: {
         show: true,
+        isEditing: true,
+        active: true,
+        view: 'v-a',
+        list: [1, 2, 3, 4, 5, 6, 7, 8],
+        nextNum: 9,
+      },
+      components: {
+        'v-a': {
+          template: `<p>Component A</p>`,
+        },
+        'v-b': {
+          template: `<p>Component B</p>`,
+        }
       },
       methods: {
-      
+        randomIndex: function() {
+          return Math.floor(Math.random() * this.list.length)
+        },
+        add: function() {
+          this.list.splice(this.randomIndex(), 0, this.nextNum++)
+        },
+        remove: function() {
+          this.list.splice(this.randomIndex(), 1)
+        }
       }
     })
   </script>
