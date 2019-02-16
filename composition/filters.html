@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Filters</h2>
+    <p>Usage: like `pipe`</p>
+    <p>Could register globally or locally.</p>
+    <input type="input" v-model='username'>
+    <p>What you input is: {{ username | captilize | append-date }}</p>
+  </div>
+  
+  <script> 
+    Vue.filter('append-date', function(value) {
+      return value + ' (at ' + new Date().toLocaleString() + ')'
+    })
+    
+    new Vue({
+      el: '#app',
+      data: {
+        username: 'john',
+      },
+      filters: {
+        captilize: function(value) {
+          if (!value) return ''
+          value = value.toString()
+          return value.charAt(0).toUpperCase() + value.slice(1)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
