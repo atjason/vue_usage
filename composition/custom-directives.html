@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>Mixins</h2>
+    <p>Usage: could register a directive globally or locally. Check code for details.</p>
+    <p>Auto focus:</p>
+    <input v-focus>
+  </div>
+  
+  <script>
+    // Global directives.
+    // Vue.directive('focus', {
+    //   inserted: function (el) {
+    //     el.focus()
+    //   }
+    // })
+
+    new Vue({
+      el: '#app',
+      directives: { // Local directives.
+        focus: {
+          inserted: function(el) {
+            el.focus()
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>
