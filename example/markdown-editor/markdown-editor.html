@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      /* width: 100%; */
+      height: 100vh;
+    }
+
+    .input-area,
+    .output-area {
+      flex-basis: 50%;
+      flex-shrink: 0;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .input-area {
+      padding-right: 4px;
+      background-color: rgb(238, 238, 238);
+      border-right: solid 1px #CCC;
+    }
+
+    .input {
+      width: 100%;
+      height: 100%;
+      resize: none;
+      border: none;
+      outline: none;
+      font-size: 1.1rem;
+      font-family: 'Monaco', courier, monospace;
+      background-color: rgb(238, 238, 238);
+    }
+  </style>
+
+  <script src="https://unpkg.com/marked@0.3.6"></script>
+  <script src="https://unpkg.com/lodash@4.16.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="editor" class='container'>
+    <div class="input-area">
+      <textarea class='input' :value='input' @input='update'></textarea>
+    </div>
+    <div class="output-area">
+      <span v-html='compiledMarkdown'></span>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#editor',
+      data: {
+        input: '# Title',
+      },
+      computed: {
+        compiledMarkdown: function() {
+          return marked(this.input, { sanitize: true })
+        }
+      },
+      methods: {
+        update: _.debounce(function(e) {
+          this.input = e.target.value
+        }, 300)
+      }
+    })
+  </script>
+</body>
+</html>
