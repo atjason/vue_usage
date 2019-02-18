@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+    }
+    li.commit {
+      line-height: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a.commit,
+    a.committer {
+      color: #F66;      
+    }
+
+    a.committer {
+      font-weight: bold;
+    }
+
+    span.date {
+      font-weight: bold;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Latest Vue.js Commits</h2>
+    <template v-for='branch in branches'>
+      <input
+        type='radio'
+        :id='branch'
+        :value='branch'
+        name='branch'
+        v-model='currentBranch'
+      >
+      <label :for='branch'>{{ branch }}</label>
+    </template>
+    <p>vuejs/vue@{{ currentBranch }}</p>
+    <ul>
+      <li class='commit' v-for='commit in commits'>
+        <a class='commit' href='commit.url'>{{ commit.sha.slice(0, 7) }}</a>
+        - {{ commit.commit.message | truncate }}
+        <br>
+        by <a class='committer' href='commit.committer.html_url'>{{ commit.commit.committer.name }}</a>
+        at <span class='date'>{{ commit.commit.committer.date | formatDate }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    var apiURL = 'https://api.github.com/repos/vuejs/vue/commits?per_page=3&sha='
+
+    new Vue({
+      el: '#app',
+      data: {
+        branches: ['master', 'dev'],
+        currentBranch: 'master',
+        commits: []
+      },
+      mounted: function() {
+        this.fetchLatestCommits()
+      },
+      watch: {
+        currentBranch: 'fetchLatestCommits',
+      },
+      filters: {
+        truncate: function(v) {
+          var index = v.indexOf('\n')
+          return (index > 0) ? v.slice(0, index) : v
+        },
+
+        formatDate: function(v) {
+          return v.replace(/T|G/g, ' ')
+        }
+      },
+      methods: {
+        fetchLatestCommits: function() {
+          var xhr = new XMLHttpRequest()
+          xhr.open('GET', apiURL + this.currentBranch)
+          xhr.onload = () => {
+            try {
+              this.commits = JSON.parse(xhr.responseText)
+            } catch(e) {
+              console.error('Failed to fetch latest comments: ' + e.message)
+            }
+          }
+          xhr.send()
+        },
+      }
+    })
+  </script>
+</body>
+</html>
