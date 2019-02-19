@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      color: #444;
+    }
+
+    table {
+      border: solid 2px lightseagreen;
+      border-radius: 4px;
+      margin: 10px;
+    }
+
+    thead tr {
+      cursor: pointer;
+      user-select: none;
+      color: white;
+      background-color: lightseagreen;
+    }
+
+    tr {
+      background-color: lightgray;
+    }
+
+    th,
+    td {
+      min-width: 60px;
+      padding: 10px 16px;
+    }
+    .arrow {
+      display: inline-block;
+      vertical-align: middle;
+      width: 0;
+      height: 0;
+      margin-left: 2px;
+    }
+
+    .arrow.asc {
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 4px solid #fff;
+    }
+
+    .arrow.dsc {
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid #fff;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <label>Search: </label>
+    <input v-model='searchKey'>
+    <br>
+
+    <sort-table 
+      :search-key='searchKey'
+      :info-keys='infoKeys' 
+      :info-list='infoList'>
+    </sort-table>
+  </div>
+
+  <script type='text/x-template' id='sort-table-template'>
+    <table>
+        <thead>
+          <tr>
+            <th v-for='key in infoKeys' :key='key' @click='changeSortKey(key)'>
+              {{ key | captilize }}
+              <template v-if='sortKey.key === key'>
+                <span class='arrow' :class="{ [sortKey.direction]: true }"></span>
+              </template>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for='info in filteredInfoList' :key='info.id'>
+            <td v-for='key in infoKeys' :key='info[key]'>
+              {{ info[key] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>    
+  </script>
+
+  <script>
+  
+    var SortDirection = Object.freeze({
+      asc: 'asc',
+      dsc: 'dsc',
+    })
+
+    function contains(value, subValue) {
+      if (!value) return
+      if (!subValue) return true
+      subValue = subValue.toString().toLowerCase
+      return value.toString().toLowerCase().indexOf(subValue) >= 0
+    }
+
+    Vue.component('sort-table', {
+      template: '#sort-table-template',
+      props: {
+        searchKey: String,
+        infoKeys: Array,
+        infoList: Array,
+      },
+      data: function() {
+        return {
+          sortKey: {
+            key: null,
+            direction: SortDirection.asc,
+          }
+        }
+      },
+      computed: {
+        filteredInfoList: function() {
+          let list = []
+          if (!this.searchKey) {
+            list = [...this.infoList]
+          } else {
+            list = this.infoList.filter(info => {
+              return contains(info.name, this.searchKey) || contains(info.age, this.searchKey)
+            })
+          }
+
+          if (this.sortKey.key) {            
+            list.sort((a, b) => {
+              if (this.sortKey.direction === SortDirection.asc) {
+                return (a[this.sortKey.key] < b[this.sortKey.key]) ? -1 : 1
+                
+              } else {
+                return (a[this.sortKey.key] > b[this.sortKey.key]) ? -1 : 1
+              }
+            })
+          }
+
+          return list
+        }
+      },
+      filters: {
+        captilize: function(value) {
+          if (!value) return
+          value = value.toString()
+          return value.charAt(0).toUpperCase() + value.slice(1)
+        }
+      },
+      methods: {
+        changeSortKey: function(key) {
+          let sortKey = Object.assign({}, this.sortKey)
+          if (this.sortKey.key == key) {
+            this.sortKey.direction = (this.sortKey.direction === SortDirection.asc) ? SortDirection.dsc : SortDirection.asc
+          } else {
+            this.sortKey.key = key
+            // The init value already includes .asc.
+            // If set key and direction seperately, may let UI refresh twice.
+            // this.sortKey.direction = SortDirection.asc
+          }
+        }
+      }
+    })
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        searchKey: '',
+        infoKeys: ['name', 'age'],
+        infoList: [
+          { id: 1, name: 'Tom', age: 13 },
+          { id: 3, name: 'John', age: 9 },
+          { id: 2, name: 'Jim', age: 12 },
+        ]
+      },
+    })
+  </script>
+</body>
+</html>
