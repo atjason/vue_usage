@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    ul {
+      font-size: 1.1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .group {
+      font-weight: bold;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <p>Usage: Double click to toggle to group.</p>
+    <ul>
+      <tree-item 
+        v-for='(item, index) in tree' 
+        :key="(item.title || item) + index"
+        :parent='tree'
+        :item='item'>
+      </tree-item>
+    </ul>
+  </div>
+
+  <script type='text/x-template' id='tree-item-template'>
+    <li>
+      <span @click='collapse(item)' @dblclick='changeToGroup(parent, item)' :class='{ group: item.subTree }'>
+        {{ item.title || item }}
+        <span v-if='item.subTree'> [{{ item.collapsed ? '+' : '-'}}]</span>
+      </span>
+      <ul v-if='item.subTree && !item.collapsed'>
+        <tree-item 
+          v-for='(subItem, index) in item.subTree' 
+          :key="(subItem.title || subItem) + index"
+          :parent='item'
+          :item='subItem'>
+        </tree-item>
+        <li @click='add(item.subTree)'>+</li>
+      </ul>
+    </li>    
+  </script>
+  
+  <script>
+    Vue.component('tree-item', {
+      template: '#tree-item-template',
+      props: ['parent', 'item'],
+      methods: {
+        collapse: function(item) {
+          item.collapsed = !item.collapsed
+        },
+        add: function(tree) {
+          tree.push('new item')
+        },
+        changeToGroup: function(parent, item) {
+          if (item.subTree) return
+
+          var index = parent.subTree.indexOf(item)
+          if (index < 0) return
+          
+          Vue.set(parent.subTree, index, {
+            title: item,
+            collapsed: false,
+            subTree: [
+              'new item',
+            ]
+          })
+        }
+      }
+    })
+
+    new Vue({
+      el: '#app',
+      data: {
+        tree: [
+          '1',
+          {
+            title: '2',
+            subTree: [
+              '2.1',
+              '2.2',
+              {
+                title: '2.3',
+                subTree: [
+                  '2.3.1',
+                  '2.3.2'                  
+                ],
+                collapsed: true,
+              }
+            ],
+            collapsed: false,
+          },
+          '3',
+        ]
+      }
+    })
+  </script>
+</body>
+</html>
