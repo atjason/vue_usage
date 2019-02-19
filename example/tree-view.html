@@ -6,6 +6,7 @@
       font-family: sans-serif;
     }
     ul {
+      padding-left: 1.1rem;
       font-size: 1.1rem;
       cursor: pointer;
       user-select: none;
@@ -38,7 +39,7 @@
         {{ item.title || item }}
         <span v-if='item.subTree'> [{{ item.collapsed ? '+' : '-'}}]</span>
       </span>
-      <ul v-if='item.subTree && !item.collapsed'>
+      <ul v-if='item.subTree' v-show='!item.collapsed'>
         <tree-item 
           v-for='(subItem, index) in item.subTree' 
           :key="(subItem.title || subItem) + index"

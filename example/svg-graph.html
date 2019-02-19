@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    .raw {
+      white-space: pre;
+      position: absolute;
+      top: 0;
+      left: 240px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="200px" height="200px">
+      <polygraph :stats='stats'></polygraph>
+    </svg>
+
+    <template v-for='(stat, index) in stats'>
+      <stat-control :stat='stat' @remove='remove(index)'></stat-control>
+    </template>
+
+    <br>
+    <input v-model='newStatLabel' placeholder="Label">
+    <button @click='add' :disabled="!newStatLabel">Add a Stat</button>
+
+    <p class='raw'>{{ stats }}</p>
+  </div>
+
+  <script type='text/x-template' id='axis-label-template'>
+    <text :x='point.x' :y='point.y'>{{ stat.label }}</text>
+  </script>
+
+  <script type='text/x-template' id='polygraph-template'>
+    <g>
+      <polygon :points='points' style="fill:lime;"></polygon>
+      <circle cx='100px' cy='100px' r='80px' style="fill:none; stroke: lightgray; stroke-width:1px;"></circle>
+      <axis-label
+        v-for='(stat, index) in stats'
+        :key='index'
+        :stat='stat'
+        :index='index'
+        :total='stats.length'>
+      </axis-label>
+    </g>
+  </script>
+
+  <script type='text/x-template' id='stat-control-template'>
+    <div>
+      <label>{{ stat.label }}</label>
+      <input type='range' v-model.number='stat.value' min='0' max='100' step='10'>
+      <span>{{ stat.value }}</span>
+      <button @click='remove'>X</button>
+    </div>
+  </script>
+
+  <script>
+    function valueToPoint (value, index, total) {
+      var offset = 100
+      var length = value * 0.8
+      var angle = Math.PI * 2 / total * index
+      var x = length * Math.sin(angle) + offset
+      var y = offset - length * Math.cos(angle)
+      return {x, y}
+    }
+
+    Vue.component('polygraph', {
+      props: ['stats'],
+      template: '#polygraph-template',
+      computed: {
+        points: function() {
+          var length = this.stats.length
+          return this.stats.map((stat, index) => {
+            var point = valueToPoint(stat.value, index, length)
+            return point.x + ',' + point.y
+          }).join(' ')
+        }
+      },
+      components: {
+        'axis-label': {
+          template: '#axis-label-template',
+          props: ['stat', 'index', 'total'],
+          computed: {
+            point: function() {
+              return valueToPoint(this.stat.value, this.index, this.total)
+            }
+          }
+        }
+      },
+    })
+
+    Vue.component('stat-control', {
+      template: '#stat-control-template',
+      props: {
+        stat: Object
+      },
+      methods: {
+        remove: function() {
+          this.$emit('remove')
+        }
+      }
+    })
+
+    var statsData = [
+      { label: 'A', value: 100 },
+      { label: 'B', value: 100 },
+      { label: 'C', value: 100 },
+      { label: 'D', value: 100 },
+      { label: 'E', value: 100 },
+    ]
+
+    new Vue({
+      el: '#app',
+      data: {
+        stats: statsData,
+        newStatLabel: '',
+      },
+      methods: {
+        add: function(e) {
+          e.preventDefault()
+          this.stats.push({
+            label: this.newStatLabel,
+            value: 100,
+          })
+          this.newStatLabel = ''
+        },
+        remove: function(index) {
+          if (this.stats.length > 3) {
+            this.stats.splice(index, 1)
+          } else {
+            alert("Can't remove more.")
+          }
+        }
+      }
+    })
+  </script>
+
+</body>
+</html>
