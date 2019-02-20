@@ -101,6 +101,10 @@
       text-overflow: ellipsis;
     }
     
+    .list-item-title-done {
+      text-decoration: line-through;
+    }
+    
     .list-item-remove {
       display: none;
       margin-left: 8px;
@@ -121,11 +125,11 @@
       background-color: white;
       z-index: 2;
     }
-
+    
     .visibility-selector {
       cursor: pointer;
       border: none;
-      color: #333;
+      font-size: 0.9rem;
       background-color: white;
       -webkit-appearance: none;
     }
@@ -157,7 +161,8 @@
             v-model='todo.done'
           >
 
-          <label class='list-item-title' 
+          <label class='list-item-title'
+            :class="{ 'list-item-title-done': todo.done}"
             v-if='todo.id != edittingId' 
             @dblclick='toggleEditing(todo)'>
             {{ todo.title }}
@@ -197,7 +202,7 @@
       data: {
         newTodoTitle: '',
         todoList: [
-          { id: '1', title: 'Buy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a book', done: false },
+          { id: '1', title: 'Buy a book', done: false },
           { id: '2', title: 'Buy a cup', done: true },
           { id: '3', title: 'Buy a cup3', done: true },
           { id: '4', title: 'Buy a cup4', done: true },
@@ -207,7 +212,7 @@
           { title: 'Active', value: 'active' },
           { title: 'Completed', value: 'completed' },
         ],
-        visibility: 'active',
+        visibility: 'all',
         edittingId: '',
       },
       computed: {
@@ -239,7 +244,6 @@
         },
 
         toggleStatus: function(todo) {
-          console.log(todo)
           todo.done = !todo.done
         },
 
