@@ -95,9 +95,20 @@
       flex-grow: 2;
     }
 
-    .remove-button {
+    .list-item-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .list-item-remove {
+      display: none;
       margin-left: 8px;
       align-self: flex-end;
+    }
+
+    .list-item-container:hover .list-item-remove {
+      display: block;
     }
 
     .status-container {
@@ -154,11 +165,14 @@
 
           <input class='list-item-input' 
             v-model='todo.title' 
-            v-if='todo.id == edittingId'
+            v-show='todo.id == edittingId'
+            v-todo-focus='todo.id == edittingId'
             @keyup.esc='toggleEditing(todo)'
-            @keyup.enter='toggleEditing(todo)'>
+            @keyup.enter='toggleEditing(todo)'
+            @blur='toggleEditing(todo)'
+          >
 
-          <button class='remove-button' @click='remove(todo)'>X</button>
+          <button class='list-item-remove' @click='remove(todo)'>X</button>
         </div>
       </transition-group>
       
@@ -183,7 +197,7 @@
       data: {
         newTodoTitle: '',
         todoList: [
-          { id: '1', title: 'Buy a book', done: false },
+          { id: '1', title: 'Buy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a bookBuy a book', done: false },
           { id: '2', title: 'Buy a cup', done: true },
           { id: '3', title: 'Buy a cup3', done: true },
           { id: '4', title: 'Buy a cup4', done: true },
@@ -225,6 +239,7 @@
         },
 
         toggleStatus: function(todo) {
+          console.log(todo)
           todo.done = !todo.done
         },
 
@@ -243,6 +258,13 @@
           const index = this.todoList.findIndex(todo => todo.id === todoToDelete.id)
           if (index >= 0) {
             this.todoList.splice(index, 1)
+          }
+        }
+      },
+      directives: {
+        'todo-focus': function(el, binding) {
+          if (binding.value) {
+            el.focus()
           }
         }
       }
