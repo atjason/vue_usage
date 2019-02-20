@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .page h1 {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .todo-container {
+      width: 500px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+      align-items: center;
+    }
+
+    .input-container,
+    .list-container,
+    .status-container {
+      width: 100%;
+    }
+
+    .input-container {
+      border-bottom: solid 1px #DDD;
+    }
+
+    .input {
+      width: 100%;
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      border: 0;
+    }
+
+    .list-container {
+      border-bottom: solid 1px #DDD;
+      display: flex;
+      flex-direction: column;
+
+      align-items: center;
+    }
+
+    .list-item-container {
+      width: 100%;
+      display: flex;
+      padding: 10px 20px;
+      border-bottom: solid 1px lightgray;
+      transition: all 1s;
+    }
+
+    .list-item-container:last-child {
+      border-bottom: none;
+    }
+
+    .list-item-group-enter-active {
+      transition: all 1s;
+    }
+    .list-item-group-leave-active {
+      position: absolute;
+    }    
+    .list-item-group-move {
+      transition: transform 1s;
+    }
+
+    .list-item-group-enter,
+    .list-item-group-leave-to {
+      opacity: 0;
+      transform: scale(0.1);
+    }
+
+    .list-item-checkbox {
+      margin-right: 8px;
+    }
+
+    .list-item-title,
+    .list-item-input {
+      font-size: 1rem;
+      flex-grow: 2;
+    }
+
+    .remove-button {
+      margin-left: 8px;
+      align-self: flex-end;
+    }
+
+    .status-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      color: #333;
+      font-size: 0.9rem;
+      background-color: white;
+      z-index: 2;
+    }
+
+    .visibility-selector {
+      cursor: pointer;
+      border: none;
+      color: #333;
+      background-color: white;
+      -webkit-appearance: none;
+    }
+    
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div class="page">
+    <h1>Todo</h1>
+    <div class="todo-container" id='app'>
+      <div class="input-container">
+        <input class="input" 
+          v-model='newTodoTitle'
+          @keyup.enter='add'
+          placeholder="What you want to do?"
+          autofocus>
+      </div>
+    
+      <transition-group name="list-item-group" tag='div' class='list-container'>
+        <div class='list-item-container'
+          v-for='todo in filteredTodoList' 
+          :key='todo.id'>
+          
+          <input type='checkbox' class="list-item-checkbox" 
+            v-if='todo.id != edittingId'
+            @click='toggleStatus(todo)'
+            v-model='todo.done'
+          >
+
+          <label class='list-item-title' 
+            v-if='todo.id != edittingId' 
+            @dblclick='toggleEditing(todo)'>
+            {{ todo.title }}
+          </label>
+
+          <input class='list-item-input' 
+            v-model='todo.title' 
+            v-if='todo.id == edittingId'
+            @keyup.esc='toggleEditing(todo)'
+            @keyup.enter='toggleEditing(todo)'>
+
+          <button class='remove-button' @click='remove(todo)'>X</button>
+        </div>
+      </transition-group>
+      
+      <div class="status-container">
+        <p>{{ remaining }} item(s) left</p>
+        <select v-model='visibility' class="visibility-selector">
+          <option 
+            v-for='option in visibilityList' 
+            :key='option.value' 
+            :value='option.value'>
+            {{ option.title }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+    new Vue({
+      el: '#app',
+      data: {
+        newTodoTitle: '',
+        todoList: [
+          { id: '1', title: 'Buy a book', done: false },
+          { id: '2', title: 'Buy a cup', done: true },
+          { id: '3', title: 'Buy a cup3', done: true },
+          { id: '4', title: 'Buy a cup4', done: true },
+        ],
+        visibilityList: [
+          { title: 'All', value: 'all' },
+          { title: 'Active', value: 'active' },
+          { title: 'Completed', value: 'completed' },
+        ],
+        visibility: 'active',
+        edittingId: '',
+      },
+      computed: {
+        filteredTodoList: function() {
+          return this.todoList.filter(todo => {
+            if (this.visibility == 'active' && !todo.done) {
+              return todo
+            } if (this.visibility == 'completed' && todo.done) {
+              return todo
+            } else if (this.visibility == 'all') {
+              return todo
+            }
+          })
+        },
+        
+        remaining: function() {
+          var count = 0
+          this.todoList.forEach(todo => {
+            if (!todo.done) {
+              count += 1
+            }
+          })
+          return count
+        }
+      },
+      methods: {
+        toggleEditing: function(todo) {
+          this.edittingId = (this.edittingId != todo.id) ? todo.id : ''
+        },
+
+        toggleStatus: function(todo) {
+          todo.done = !todo.done
+        },
+
+        add: function() {
+          if (!this.newTodoTitle) return
+
+          this.todoList.push({
+            id: Date.now() + Math.random() + '', 
+            title: this.newTodoTitle, 
+            done: false,
+          })
+          this.newTodoTitle = ''
+        },
+
+        remove: function(todoToDelete) {
+          const index = this.todoList.findIndex(todo => todo.id === todoToDelete.id)
+          if (index >= 0) {
+            this.todoList.splice(index, 1)
+          }
+        }
+      }
+    })
+  </script>
+</body>
+</html>
