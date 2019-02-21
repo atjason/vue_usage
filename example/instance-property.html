@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+
+  </div>
+
+  <script>
+    Vue.prototype.$appName = 'My App'
+    Vue.prototype.$sayHello = function() {
+      console.log('Hello World.')
+    }
+    Vue.prototype.$printInstanceVariable = function(key) {
+      // Note: `this` is the instance which call this method.
+      console.log(this[key])
+    }
+
+    new Vue({
+      el: '#app',
+      data: {
+        message: 'How are you?',
+      },
+      beforeCreate: function() {
+        console.log(this.$appName)
+        this.$sayHello()
+      },
+      created: function() {
+        this.$printInstanceVariable('message')
+      }
+    })
+  </script>
+</body>
+</html>
