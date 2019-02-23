@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    
-  </style>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/vuex@3.1.0/dist/vuex.js"></script>
 </head>
@@ -13,6 +10,8 @@
     <counter></counter>
     <button @click="add">Add</button>
     <button @click="add2">Add 2</button>
+    <button @click="addDelayed">Add 1s Later</button>
+    <button @click="add2Delayed">Add 2 1s Later</button>
 
     <!-- <p>Done todo count: {{ $store.getters.doneTodosCount }}</p> -->
     <todo-component></todo-component>
@@ -100,6 +99,27 @@
         incrementBy(state, payload) {
           state.count += payload.count
         }
+      },
+      actions: {
+        incrementDelayed({ commit, dispatch }) {
+          // return new Promise((resolve, reject) => {
+          //   setTimeout(() => {
+          //     commit('increment')
+          //     resolve()
+          //   }, 1000)
+          // })
+
+          return dispatch('incrementByDelayed', { count: 1 })
+        },
+
+        incrementByDelayed({ commit }, payload) {
+          return new Promise(resolve => {
+            setTimeout(() => {
+              commit('incrementBy', payload)
+              resolve()
+            }, 1000)
+          })
+        }
       }
     })
 
@@ -129,10 +149,37 @@
 
           this.incrementBy({ count: 2})
         },
+        addDelayed() {
+          // this.incrementDelayed()
+          // Same with:
+          // this.$store.dispatch('incrementDelayed')
+
+          this.incrementDelayed().then(() => {
+            console.log('Already add.')
+          })
+        },
+        add2Delayed() {
+          // All these ways are correct.
+          // this.$store.dispatch('incrementByDelayed', { count: 2 })
+
+          // this.$store.dispatch({
+          //   type: 'incrementByDelayed',
+          //   count: 2,
+          // })
+
+          this.incrementByDelayed({ count: 2}).then(() => {
+            console.log('Already add 2.')
+          })
+        },
         ...Vuex.mapMutations([
           'increment', // map `this.increment()` to `this.$store.commit('increment')`
           // `mapMutations` also supports payloads:
-          'incrementBy' // map `this.incrementBy(amount)` to `this.$store.commit('incrementBy', amount)`
+          'incrementBy' // map `this.incrementBy(payLoad)` to `this.$store.commit('incrementBy', payLoad)`
+        ]),
+        ...Vuex.mapActions([
+          'incrementDelayed', // map `this.incrementDelayed()` to `this.$store.dispatch('incrementDelayed')`
+          // `mapActions` also supports payloads:
+          'incrementByDelayed' // map `this.incrementByDelayed(payLoad)` to `this.$store.dispatch('incrementByDelayed', payLoad)`
         ])
       }
     })
