@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuex@3.1.0/dist/vuex.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <counter></counter>
+    <button @click="add">Add</button>
+
+    <!-- <p>Done todo count: {{ $store.getters.doneTodosCount }}</p> -->
+    <todo-component></todo-component>
+    
+    <ul>
+      <li v-for="todo in $store.getters.doneTodos" :key="todo.id">
+        {{ todo.title }}
+      </li>
+    </ul>
+
+    <span>id: 1, title: {{ $store.getters.getTodoById(1).title }}</span>
+  </div>
+
+  <script>
+
+    const Counter = {
+      template: `<p>{{ count }}</p>`,
+      // Step 1:
+      // computed: {
+      //   count() {
+      //     return this.$store.state.count
+      //   }
+      // },
+
+      // Step 2:
+      // Vuex.mapState could help to generate computed getter functions to save code.
+      // computed: Vuex.mapState({
+      //   count: state => state.count
+      // })
+
+      // Step 3: Even simple demo.
+      // computed: Vuex.mapState([
+      //   // map this.count to store.state.count
+      //   'count'
+      // ])
+
+      // Step 4: Combinate with other local computed properties.
+      computed: {
+        countAlias() {
+          return this.count
+        },
+
+        ...Vuex.mapState([
+          // map this.count to store.state.count
+          'count'
+        ]),
+      }
+    }
+
+    const TodoComponent = {
+      template: `<p>Done todo count: {{ doneTodosCount }}</p>`,
+      computed: {
+        ...Vuex.mapGetters([
+          'doneTodosCount'
+        ])
+      }
+    }
+
+    const store = new Vuex.Store({
+      state: {
+        count: 0,
+        todos: [
+          { id: 1, title: 'Buy a book', done: true },
+          { id: 2, title: 'Buy a cup', done: false },
+        ]
+      },
+      getters: {
+        doneTodos: state => {
+          return state.todos.filter(todo => todo.done)
+        },
+
+        doneTodosCount: (state, getters) => {
+          return getters.doneTodos.length
+        },
+
+        getTodoById: state => id => {
+          return state.todos.find(todo => todo.id === id)
+        }
+      },
+      mutations: {
+        increment(state) {
+          state.count += 1
+        }
+      }
+    })
+
+    new Vue({
+      el: '#app',
+      // provide the store using the "store" option.
+      // this will inject the store instance to all child components, which uses as this.$store.
+      store,
+      components: {
+        Counter,
+        TodoComponent,
+      },
+      methods: {
+        add() {
+          this.$store.commit('increment')
+        }
+      }
+    })
+  </script>
+</body>
+</html>
