@@ -8,6 +8,11 @@
   <div id="app">
     <p>Orignial message: {{ message }}</p>
     <p>Computed reversed message: {{ reversedMessage }}</p>
+
+    <h2>Two-way Computed Property</h2>
+    <input v-model="name" placeholder="Enter you name">
+    <p>Name: {{ name }}</p>
+    <p>Usage: this could avoid deep watch for object in data.</p>
   </div>
   <script>
 
@@ -15,10 +20,22 @@
       el: '#app',
       data: {
         message: 'Hello',
+        person: {
+          name: 'Tom',
+        }
       },
       computed: {
         reversedMessage: function() {
           return this.message.split('').reverse().join('')
+        },
+
+        name: {
+          get() {
+            return this.person.name
+          },
+          set(newValue) {
+            this.person.name = newValue
+          }
         }
       }      
     })
