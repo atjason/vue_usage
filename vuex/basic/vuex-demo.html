@@ -12,10 +12,11 @@
   <div id='app'>
     <counter></counter>
     <button @click="add">Add</button>
+    <button @click="add2">Add 2</button>
 
     <!-- <p>Done todo count: {{ $store.getters.doneTodosCount }}</p> -->
     <todo-component></todo-component>
-    
+
     <ul>
       <li v-for="todo in $store.getters.doneTodos" :key="todo.id">
         {{ todo.title }}
@@ -94,6 +95,10 @@
       mutations: {
         increment(state) {
           state.count += 1
+        },
+
+        incrementBy(state, payload) {
+          state.count += payload.count
         }
       }
     })
@@ -109,8 +114,26 @@
       },
       methods: {
         add() {
-          this.$store.commit('increment')
-        }
+          this.increment()
+          // Same with:
+          // this.$store.commit('increment')
+        },
+        add2() {
+          // All these ways are correct.
+          // this.$store.commit('incrementBy', { count: 2 })
+
+          // this.$store.commit({
+          //   type: 'incrementBy',
+          //   count: 2,
+          // })
+
+          this.incrementBy({ count: 2})
+        },
+        ...Vuex.mapMutations([
+          'increment', // map `this.increment()` to `this.$store.commit('increment')`
+          // `mapMutations` also supports payloads:
+          'incrementBy' // map `this.incrementBy(amount)` to `this.$store.commit('incrementBy', amount)`
+        ])
       }
     })
   </script>
