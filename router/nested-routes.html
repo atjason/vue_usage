@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vue Router: Nested Routes</h2>
+    <p>Note: All the links before are under /user/</p>
+    <p>
+      <router-link to='/user/Tom'>Home</router-link>
+      <router-link to='/user/Tom/profile'>Profile</router-link>
+      <router-link to='/user/Tom/posts/1'>Posts</router-link>
+    </p>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const User = { 
+      template: `
+        <div>
+          <p>User: {{ $route.params.username }}</p>
+          <router-view></router-view>
+        </div>
+      `,
+    }
+
+    const UserHome = { template: `<p>I'm user's home page.</p>` }
+    const UserProfile = { template: `<p>I'm user's profile page.</p>` }
+    const UserPosts = { template: `<p>I'm user's posts {{ $route.params.id }}.</p>` }
+
+    const router = new VueRouter({
+      routes: [
+        {
+          path: '/user/:username', component: User,
+          children: [
+            { path: '', component: UserHome },            // e.g., /user/Tom
+            { path: 'profile', component: UserProfile },  // e.g., /user/Tom/profile
+            { path: 'posts/:id', component: UserPosts },  // e.g., /user/Tome/posts/1
+          ]
+        },
+      ]
+    })
+
+    new Vue({
+      el: '#app',
+      router
+    })
+  </script>
+</body>
+</html>
