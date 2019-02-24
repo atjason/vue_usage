@@ -40,7 +40,7 @@
       <button @click="openHome">Home</button>
       <button @click="openProfile">Profile</button>
       <button @click="openPosts">Posts</button>
-      <button @click="openCategary">Category Food</button>
+      <button @click="openCategory">Category Food</button>
       -
       <button @click="goForward">Forward</button>
       <button @click="goBack">Back</button>
@@ -61,7 +61,7 @@
     const UserHome = { template: `<p>I'm user's home page.</p>` }
     const UserProfile = { template: `<p>I'm user's profile page.</p>` }
     const UserPosts = { template: `<p>I'm user's posts {{ $route.params.id }}.</p>` }
-    const Categary = { template: `<p>I'm category {{ $route.params.categaryId }}.</p>` }
+    const Category = { template: `<p>I'm category {{ $route.params.categoryId }}.</p>` }
 
     const router = new VueRouter({
       routes: [
@@ -74,7 +74,7 @@
           ]
         },
         {
-          path: '/categary/:categaryId', name: 'categary', component: Categary,
+          path: '/category/:categoryId', name: 'category', component: Category,
         }
       ]
     })
@@ -92,8 +92,8 @@
         openPosts() {
           this.$router.push({ path: '/user/Tom/posts/1', query: { color: 'red' }, hash: 'footer' })
         },
-        openCategary() {
-          this.$router.push({ name: 'categary', params: { categaryId: 'food' }})
+        openCategory() {
+          this.$router.push({ name: 'category', params: { categoryId: 'food' }})
         },
         goForward() {
           this.$router.go(1)
