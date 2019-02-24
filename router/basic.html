@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Hello Vue Router</h2>
+    <p>
+      <!-- use router-link component for navigation. -->
+      <!-- specify the link by passing the `to` prop. -->
+      <!-- `<router-link>` will be rendered as an `<a>` tag by default -->
+      <router-link to='/home'>Home</router-link>
+      <router-link to='/about'>About</router-link>
+    </p>
+    <!-- route outlet -->
+    <!-- component matched by the route will render here -->
+    <router-view></router-view>
+  </div>
+
+  <script>
+    // 0. If using a module system (e.g. via vue-cli), 
+    // import Vue and VueRouter and then call `Vue.use(VueRouter)`.
+
+    // 1. Define route components.
+    // These can be imported from other files
+    const Home  = { template: `<p>I'm the Home page</p>` }
+    const About = { template: `<p>I'm the About page</p>` }
+
+    // 2. Define some routes
+    // Each route should map to a component. 
+    // The "component" can either be an actual component constructor created via
+    // `Vue.extend()`, or just a component options object.
+    const routes = [
+      { path: '/home',  component: Home },
+      { path: '/about', component: About },
+    ]
+
+    // 3. Create the router instance and pass the `routes` option.
+    const router = new VueRouter({
+      routes
+    })
+
+    // 4. Create and mount the root instance.
+    // Make sure to inject the router with the router option to make the
+    // whole app router-aware.
+    new Vue({
+      el: '#app',
+      router
+    })
+  </script>
+</body>
+</html>
