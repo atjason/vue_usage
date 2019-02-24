@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vue Router Params</h2>
+    <p>
+      <router-link to='/user/Tom/post/2?page=3#body'>Tom</router-link>
+      <router-link to='/user/Jim/post/1?page=4#footer'>Jim</router-link>
+      <router-link to='/user-admin'>Admin</router-link>
+      <router-link to='/invalid-url'>Not_Found</router-link>
+    </p>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const User = { 
+      template: `
+        <div>
+          <p :hidden="!showRouteUpdate">Will jump from {{ fromRoute.fullPath }} to {{ toRoute.fullPath }}</p>
+          <span style="white-space: pre">{{ paramInfo }}</span>
+        </div>
+      `,
+      data() {
+        return {
+          showRouteUpdate: false,
+          fromRoute: {},
+          toRoute: {},
+        }
+      },
+      computed: {
+        paramInfo: function() {
+          return {
+            path: this.$route.path,
+            fullPath: this.$route.fullPath,
+            params: this.$route.params,
+            query: this.$route.query,
+            hash: this.$route.hash,
+            name: this.$route.name,
+            redirectedFrom: this.$route.redirectedFrom,
+          }
+        }
+      },
+      beforeRouteUpdate(to, from, next) {
+        this.showRouteUpdate = true
+        this.fromRoute = from
+        this.toRoute = to
+        next()
+      }
+    }
+
+    const NotFound = {
+      template: `<p>404 Not Found</p>`
+    }
+
+    const router = new VueRouter({
+      routes: [
+        { path: '/user/:username/post/:id', component: User },
+        { path: '/user-*', component: User },
+        { path: '*', component: NotFound }
+      ]
+    })
+
+    new Vue({
+      el: '#app',
+      router
+    })
+  </script>
+</body>
+</html>
