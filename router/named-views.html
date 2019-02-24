@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vue Router: Named Views</h2>
+    <router-view></router-view>
+  </div>
+  
+  <script>
+    const UserSettings = {
+      template: `
+        <div>
+          <h3>User Settings</h3>
+          <p>
+            <router-link to="/settings/email">Email</router-link>
+            <router-link to="/settings/profile">Profile</router-link>
+          </p>
+          <router-view />
+          <router-view name='helper' />
+        </div>
+      `,
+    }
+
+    const UserEmailSetings = { template: `<p>I'm the email settings.</p>` }
+    const UserProfileSetings = { template: `<p>I'm the profile settings.</p>` }
+    const UserProfileSetingsHelper = { template: `<p>I'm the profile settings helper.</p>` }
+
+    const routes = [
+      {
+        path: '/settings', component: UserSettings,
+        children: [
+          { path: 'email', component: UserEmailSetings },
+          {
+            path: 'profile',
+            components: {
+              default: UserProfileSetings,
+              helper: UserProfileSetingsHelper,
+            }
+          }
+        ]
+      }
+    ]
+
+    const router = new VueRouter({
+      routes
+    })
+
+    new Vue({
+      el: '#app',
+      router,
+      mounted() {
+        this.$router.push("settings")
+      }
+    })
+    
+  </script>
+</body>
+</html>
