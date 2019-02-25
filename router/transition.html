@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: all 0.5s ease;
+    }
+
+    .fade-enter,
+    .fade-leave-to {
+      opacity: 0;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vue Router: Transition</h2>
+    <ul>
+      <li>Global Transition</li>
+      <li>Per-route Transition</li>
+      <li>Route-Based Dynamic Transition</li>
+    </ul>
+    <p>
+      <router-link to='/home'>Home</router-link>
+      <router-link to='/user'>User</router-link>
+    </p>
+    <transition name='fade' mode='out-in'>
+      <router-view></router-view>
+    </transition>
+  </div>
+
+  <script>
+    const Home = { template: `<p>I'm the Home page.</p>` }
+    const User = { template: `<p>I'm the User page.</p>` }
+    
+    const router = new VueRouter({
+      routes: [
+        { path: '/home', component: Home },
+        { path: '/user', component: User },
+      ]
+    })
+    
+    new Vue({
+      el: '#app',
+      router,
+    })
+  </script>
+</body>
+</html>
