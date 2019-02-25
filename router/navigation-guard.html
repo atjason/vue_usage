@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <h2>Vur Router: Navigation Guard</h2>
+
+  <h3>The Full Navigation Resolution Flow</h3>
+  <ul>
+    <li>Navigation triggered.</li>
+    <li>Call leave guards in deactivated components.</li>
+    <li>Call global `beforeEach` guards.</li>
+    <li>Call `beforeRouteUpdate` guards in reused components.</li>
+    <li>Call `beforeEnter` in route configs.</li>
+    <li>Resolve async route components.</li>
+    <li>Call `beforeRouteEnter` in activated components.</li>
+    <li>Call global `beforeResolve` guards.</li>
+    <li>Navigation confirmed.</li>
+    <li>Call global `afterEach` hooks.</li>
+    <li>DOM updates triggered.</li>
+    <li>Call callbacks passed to next in `beforeRouteEnter` guards with instantiated instances.</li>
+  </ul>
+
+  <p>Note: check code and console for workflow.</p>
+    
+  <div id='app'>
+    <p>
+      <router-link to='/user/1'>User1</router-link>
+      <router-link to='/user/2'>User2</router-link>
+      <router-link to='/search?q=book'>Search</router-link>
+    </p>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const User = {
+      props: ['id'],
+      template: `<p>User: {{ id }}</p>`,
+      beforeRouteEnter (to, from, next) {
+        // called before the route that renders this component is confirmed.
+        // does NOT have access to `this` component instance,
+        // because it has not been created yet when this guard is called!
+        console.log('In-Component beforeRouteEnter')
+        next(vm => {
+          // access to component instance via `vm`
+          console.log('In-Component beforeRouteEnter > next')
+        })
+      },
+      beforeRouteUpdate (to, from, next) {
+        // called when the route that renders this component has changed,
+        // but this component is reused in the new route.
+        // For example, for a route with dynamic params `/foo/:id`, when we
+        // navigate between `/foo/1` and `/foo/2`, the same `Foo` component instance
+        // will be reused, and this hook will be called when that happens.
+        // has access to `this` component instance.
+        console.log('In-Component beforeRouteUpdate')
+        next()
+      },
+      beforeRouteLeave (to, from, next) {
+        // called when the route that renders this component is about to
+        // be navigated away from.
+        // has access to `this` component instance.
+        console.log('In-Component beforeRouteLeave')
+        next()
+      }
+    }
+    const Search = {
+      props: ['query'],
+      template: `<p>I'm the search page. Query: {{ query }}</p>`
+    }
+
+    const routes = [
+      { 
+        path: '/user/:id', 
+        component: User, 
+        props: true,
+        beforeEnter: (to, from, next) => {
+          console.log('Per-Route beforeEnter')
+          next()
+        }
+      },
+      { path: '/search', component: Search, props: route => ({ query: route.query.q }) },
+    ]
+
+    const router = new VueRouter({
+      routes
+    })
+
+    router.beforeEach((to, from, next) => {
+      console.log('Global beforeEach')
+      next()
+    })
+    router.beforeResolve((to, from, next) => {
+      console.log('Global beforeResolve')
+      next()
+    })
+    router.afterEach((to, from) => {
+      console.log('Global afterEach')
+      console.log('---')
+    })
+
+    new Vue({
+      el: '#app',
+      router,
+    })
+  </script>
+</body>
+</html>
