@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vur Router: Redirect and Alias</h2>
+    <p>
+      <router-link to='/admin'>Admin</router-link>
+      <router-link to='/manage'>Manage</router-link>
+      <router-link to='/adminAlias'>AdminAlias</router-link>
+    </p>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const Admin = {
+      template: `
+        <div>
+          <p>I'm the admin page</p>
+          <p>URL Path: {{ $route.path }}</p>
+        </div>
+      `,
+    }
+
+    const router = new VueRouter({
+      routes: [
+        { path: '/admin', component: Admin, alias: '/adminAlias' },
+        { path: '/manage', redirect: '/admin' },
+      ]
+    })
+
+    new Vue({
+      el: '#app',
+      router,
+    })
+  </script>
+</body>
+</html>
