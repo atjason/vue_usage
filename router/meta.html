@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vue Router: Meta</h2>
+    <p>Why use meta?</p>
+    <p>A URL can match multi route records. `meta` of a route could be used to decide which one to use.</p>
+    <p>And could be used for other cases, such as check a URL needs login to access or not.</p>
+    <span>Authed: {{ authed }}</span>
+    <button @click="authed = !authed">Toggle Auth</button>
+    <p>
+      <router-link to='/home'>Home</router-link>
+      <router-link to='/user'>User</router-link>
+    </p>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const Home = { template: `<p>I'm the Home page.</p>` }
+    const User = { template: `<p>I'm the User page.</p>` }
+    const Login = { template: `<p>I'm the Login page.</p>` }
+    
+    const router = new VueRouter({
+      routes: [
+        { 
+          path: '/user',  
+          component: User,
+          meta: {
+            requireAuth: true,
+          }
+        },
+        { path: '/home', component: Home },
+        { path: '/login', component: Login },
+      ]
+    })
+
+    // Note: This is just for demo. Should use Vuex to store global status.
+    const data = {
+      authed: false,
+    }
+
+    router.beforeEach((to, from, next) => {
+      if (to.matched.some(route => route.meta.requireAuth) && !data.authed) {
+        next({
+          path: '/login',
+          query: {
+            redirect: to.fullPath,
+          }
+        })
+      } else {
+        next()
+      }
+    })
+    
+    new Vue({
+      el: '#app',
+      router,
+      data,
+    })
+  </script>
+</body>
+</html>
