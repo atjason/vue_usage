@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .navigation {
+      position: fixed;
+      top: 1rem;
+    }
+
+    p {
+      padding-top: 2000px;
+      background: linear-gradient(to bottom, white, blue);
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <div class='navigation'>
+      <h2>Vue Router: Scroll Behavior</h2>
+      <router-link to='/home'>Home</router-link>
+      <router-link to='/user#hash1'>User</router-link>
+      <br>
+      <span>Note: `savedPosition` only available if this is a popstate navigation (triggered by the browser's back/forward buttons).</span>
+    </div>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const Home = { template: `<p>I'm the Home page.</p>` }
+    const User = { 
+      template: `
+        <div>
+          <p>I'm the User page.</p>
+          <a id='hash1' href='#'>Hash-1</a>
+        </div>
+      `, 
+    }
+    
+    const router = new VueRouter({
+      routes: [
+        { path: '/home', component: Home },
+        { path: '/user', component: User },
+      ],
+      scrollBehavior(to, from, savedPosition) {
+        if (to.hash) {
+          // return {
+          //   selector: to.hash,
+          //   // offset: { x: 0, y: 10 },
+          // }
+
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              resolve({ selector: to.hash })
+            }, 500)
+          })
+
+        } else {
+          return savedPosition || { x: 0, y: 0 }
+        }
+      }
+    })
+    
+    new Vue({
+      el: '#app',
+      router,
+    })
+  </script>
+</body>
+</html>
