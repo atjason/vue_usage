@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vue Router: Fetch Data</h2>
+    <ul>
+      <li><router-link to='/posts'>Posts</router-link></li>
+    </ul>
+    <router-view></router-view>
+    <p>This is for demo of `fetch after navigation`.</p>
+    <p>
+      For demo about `fetch before navigation`, please refer to 
+      <a href='https://router.vuejs.org/guide/advanced/data-fetching.html'>here</a>.
+    </p>
+  </div>
+
+  <script>
+    const Posts = { 
+      template: `
+        <div>
+          <p v-if='isLoading'>Loading…</p>
+          <p v-if='!isLoading'>I'm the Posts content.</p>
+        </div>
+      `,
+      data() {
+        return {
+          isLoading: true,
+        }
+      },
+      created() {
+        this.fetchData()
+      },
+      watch: {
+        // call again the method if the route changes
+        '$route': 'fetchData'
+      },
+      methods: {
+        fetchData() {
+          setTimeout(() => {
+            this.isLoading = false
+          }, 1000)
+        }
+      }
+    }
+    
+    const router = new VueRouter({
+      routes: [
+        { path: '/posts', component: Posts },
+      ]
+    })
+    
+    new Vue({
+      el: '#app',
+      router,
+    })
+  </script>
+</body>
+</html>
