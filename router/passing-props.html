@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <h2>Vur Router: Redirect and Alias</h2>
+    <p>
+      <router-link to='/user/2'>User1</router-link>
+      <router-link to='/promotion'>Promotion</router-link>
+      <router-link to='/search?q=book'>Search-Book</router-link>
+    </p>
+    <router-view></router-view>
+  </div>
+
+  <script>
+    const User = {
+      props: ['id'],
+      template: `<p>User: {{ id }}</p>`,
+    }
+    const Promotion = {
+      props: ['showDetails'],
+      template: `<p>I'm the promotion page. Show details: {{ showDetails }}</p>`
+    }
+    const Search = {
+      props: ['query'],
+      template: `<p>I'm the search page. Query: {{ query }}</p>`
+    }
+
+    const router = new VueRouter({
+      routes: [
+        // When props is set to true, the route.params will be set as the component props.
+        { path: '/user/:id', component: User, props: true },
+
+        // When props is an object, this will be set as the component props as-is.
+        // Useful for when the props are static.
+        { path: '/promotion', component: Promotion, props: { showDetails: true } },
+
+        // Use a function to returns props, which is most flexible.
+        { path: '/search', component: Search, props: route => ({ query: route.query.q }) },
+      ]
+    })
+
+    new Vue({
+      el: '#app',
+      router,
+    })
+  </script>
+</body>
+</html>
