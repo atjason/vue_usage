@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-i18n/dist/vue-i18n.js"></script>
+</head>
+
+<body>
+  <div id='app'>
+    <select v-model='$i18n.locale'>
+      <option v-for='lang in langs' :key='lang.key' :value='lang.key'>{{ lang.title }}</option>
+    </select>
+    <p>{{ $t('message.hello') }}</p>
+    <a href='https://kazupon.github.io/vue-i18n/started.html'>Doc</a>
+  </div>
+
+  <script>
+    const messages = {
+      en: {
+        message: {
+          hello: 'Hello World.'
+        }
+      },
+      cn: {
+        message: {
+          hello: '你好，世界。',
+        }
+      }
+    }
+
+    const i18n = new VueI18n({
+      locale: 'cn',
+      messages,
+    })
+
+    new Vue({
+      el: '#app',
+      i18n,
+      data: {
+        langs: [
+          { key: 'en', title: 'English' },
+          { key: 'cn', title: '简体中文' },
+        ]
+      },
+    })
+  </script>
+  
+</body>
+</html>
